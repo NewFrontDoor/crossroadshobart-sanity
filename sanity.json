@@ -1,0 +1,51 @@
+{
+  "root": true,
+  "project": {
+    "name": "crossroadshobart"
+  },
+  "api": {
+    "projectId": "woz73k85",
+    "dataset": "production"
+  },
+  "plugins": [
+    "@sanity/base",
+    "@sanity/components",
+    "@sanity/default-layout",
+    "@sanity/default-login",
+    "@sanity/desk-tool",
+    "dashboard-widget-feed",
+    "@sanity/color-input",
+    "@sanity/vision",
+    "@sanity/google-maps-input",
+    "@sanity/dashboard",
+    "dashboard-widget-structure-menu",
+    "my-studio-logo",
+    "s3-upload-widget",
+    "duplicate-array-item"
+  ],
+  "env": {
+    "development": {
+      "plugins": [
+        "@sanity/vision"
+      ]
+    }
+  },
+  "parts": [
+    {
+      "implements": "part:@sanity/dashboard/config",
+      "path": "./dashboardConfig.js"
+    },
+    {
+      "name": "part:@sanity/base/schema",
+      "path": "./schemas/schema.js"
+    },
+    {
+      "name": "part:@sanity/desk-tool/structure",
+      "path": "./structure.js"
+    },
+    {
+      "implements": "part:@sanity/base/theme/variables/override-style",
+      "path": "variableOverrides.css"
+    }
+  ]
+}
