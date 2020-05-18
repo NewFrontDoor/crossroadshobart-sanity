@@ -57,7 +57,7 @@ function patchSanity({title, passage, series, date, speaker, key}) {
       current: speakingurl(title, {truncate: 200, symbols: true})
     },
     preachedDate: date,
-    preacher: {_ref: speaker},
+    speaker: {_ref: speaker},
     series: {_ref: series},
     file: key
   };

@@ -11,7 +11,7 @@ import modals from './modals';
 import link from './link';
 import {
   formObject as form,
-  formField as formfield,
+  // formField as formfield,
   formArrayField as formarrayfield
 } from '@newfrontdoor/form';
 import LayoutHome from './LayoutHome';
@@ -28,6 +28,7 @@ import button from './button';
 import inlineButton from './inline-button';
 import podcast from './podcast';
 import submission from './form-submissions';
+import formfield from './formfield';
 
 export default createSchema({
   name: 'default',

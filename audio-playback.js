@@ -19,7 +19,7 @@ const getPresignedPostData = (selectedFile, bucket) => {
 
     // Set the proper URL here.
     const url =
-      'https://8dk9jr13id.execute-api.us-west-2.amazonaws.com/dev/sermon-upload';
+      'https://1xfok5o7l9.execute-api.us-west-2.amazonaws.com/production/sermon-upload';
 
     xhr.open('POST', url, true);
     xhr.setRequestHeader('Content-Type', 'application/json');
@@ -27,7 +27,8 @@ const getPresignedPostData = (selectedFile, bucket) => {
       JSON.stringify({
         name: selectedFile.name,
         type: selectedFile.type,
-        bucket
+        bucket,
+        region: 'apSoutheast2'
       })
     );
     xhr.addEventListener('load', e => {
@@ -44,6 +45,8 @@ const uploadFileToS3 = (presignedPostData, file) => {
     });
     // Actual file has to be appended last.
     formData.append('file', file);
+
+    console.log(presignedPostData);
 
     fetch(presignedPostData.url, {
       method: 'post',

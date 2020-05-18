@@ -15,7 +15,7 @@ export default [
       sunday.setDate(sunday.getDate() - sunday.getDay());
       return {
         preachedDate: sunday,
-        preacher: {
+        speaker: {
           _type: 'reference',
           _ref: 'ec300289-65a8-4c56-aa53-304f7d263695'
         },

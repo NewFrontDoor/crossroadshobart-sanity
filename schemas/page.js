@@ -20,6 +20,18 @@ export default {
       validation: Rule => Rule.required()
     },
     {
+      name: 'parent',
+      title: 'Parent page',
+      type: 'reference',
+      description:
+        'If this page ought to sit under another page categorically, then choose that page here. Selecting "Ministries" page for example will result in a url such as "crossroadshobart.org/ministries/*your slug here*"',
+      to: [
+        {
+          type: 'page'
+        }
+      ]
+    },
+    {
       name: 'shortdescription',
       title: 'Short description',
       type: 'string',

@@ -39,8 +39,7 @@ export default {
           'radio',
           'url',
           'file',
-          'number',
-          'field-array'
+          'number'
         ],
         layout: 'dropdown'
       }
@@ -103,6 +102,7 @@ export default {
         }
       ]
     },
+
     {
       title: 'Styling',
       name: 'styling',
@@ -124,5 +124,11 @@ export default {
         }
       ]
     }
-  ]
+  ],
+  initialValue: {
+    required: false,
+    validation: {
+      validationType: 'none'
+    }
+  }
 };

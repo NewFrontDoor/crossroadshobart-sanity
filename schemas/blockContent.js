@@ -128,6 +128,33 @@ export default {
       title: 'Content block',
       type: 'reference',
       to: [{type: 'gridblock'}, {type: 'form'}, {type: 'button'}]
+    },
+    {
+      title: 'Table of Contents',
+      name: 'toc',
+      type: 'object',
+      fields: [
+        {
+          name: 'heading',
+          title: 'Heading for the Table of Contents',
+          type: 'string'
+        },
+        {
+          name: 'headingRef',
+          title: 'Heading to tabulate',
+          type: 'string',
+          options: {
+            list: [
+              {title: 'H1', value: 'h1'},
+              {title: 'H2', value: 'h2'},
+              {title: 'H3', value: 'h3'},
+              {title: 'H4', value: 'h4'},
+              {title: 'H5', value: 'h5'}
+            ],
+            layout: 'dropdown'
+          }
+        }
+      ]
     }
   ]
 };

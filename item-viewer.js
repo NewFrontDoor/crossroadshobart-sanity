@@ -13,7 +13,7 @@ const ItemViewer = ({document}) => {
       title,
       "id": _id,
       preachedDate,
-      preacher ->{name}
+      speaker ->{name}
     }`;
     sanityClient.fetch(query).then(response => {
       setItems(response);
