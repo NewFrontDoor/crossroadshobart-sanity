@@ -13,22 +13,20 @@ const createPatchFrom = value =>
 
 const bucket = 'sermons.crossroadshobart.org';
 
-const getPresignedPostData = (selectedFile, bucket) => {
+const getPresignedPostData = selectedFile => {
   return new Promise(resolve => {
     const xhr = new XMLHttpRequest();
 
     // Set the proper URL here.
     const url =
-      'https://1xfok5o7l9.execute-api.us-west-2.amazonaws.com/production/sermon-upload';
+      'https://www.crossroadshobart.org/api/sermon-upload';
 
     xhr.open('POST', url, true);
     xhr.setRequestHeader('Content-Type', 'application/json');
     xhr.send(
       JSON.stringify({
         name: selectedFile.name,
-        type: selectedFile.type,
-        bucket,
-        region: 'apSoutheast2'
+        type: selectedFile.type
       })
     );
     xhr.addEventListener('load', e => {
@@ -98,12 +96,12 @@ export default class AudioPlayer extends React.Component {
   };
 
   onDrop = acceptedFiles => {
-    this.activateUpload(acceptedFiles[0], bucket);
+    this.activateUpload(acceptedFiles[0]);
     this.setState({fileName: acceptedFiles[0].name});
   };
 
-  async activateUpload(selectedFile, bucket) {
-    await getPresignedPostData(selectedFile, bucket).then(data => {
+  async activateUpload(selectedFile) {
+    await getPresignedPostData(selectedFile).then(data => {
       this.completeUpload(selectedFile, data.data);
     });
   }
