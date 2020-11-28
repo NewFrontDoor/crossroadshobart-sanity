@@ -74,26 +74,34 @@ export default class AudioPlayer extends React.Component {
     value: PropTypes.string
   };
 
-  onDrop = acceptedFiles => {
+  onDrop = async acceptedFiles => {
     this.activateUpload(acceptedFiles[0]);
     this.setState({fileName: acceptedFiles[0].name});
   };
 
   async activateUpload(selectedFile) {
-    await getPresignedPostData(selectedFile).then(data => {
-      this.completeUpload(selectedFile, data.data);
-    });
+    try {
+      const response = await getPresignedPostData(selectedFile);
+
+      if (response.ok) {
+        await response
+          .json()
+          .then(data => this.completeUpload(selectedFile, data));
+      }
+    } catch (error) {
+      console.log('Fialed to completeUpload', error);
+    }
   }
 
-  async completeUpload(selectedFile, key) {
+  async completeUpload(selectedFile, presignedPostData) {
     try {
-      await uploadFileToS3(key, selectedFile);
+      await uploadFileToS3(presignedPostData, selectedFile);
       this.setState({
         fileOnS3: true
       });
 
-      console.log(key.fields.key);
-      this.props.onChange(createPatchFrom(key.fields.key));
+      console.log(presignedPostData.fields.key);
+      this.props.onChange(createPatchFrom(presignedPostData.fields.key));
       console.log('File was successfully uploaded!');
     } catch (error) {
       console.log('there was a problem with setting fileonS3 to true');
