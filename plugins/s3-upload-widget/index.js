@@ -7,45 +7,33 @@ import speakingurl from 'speakingurl';
 
 const bucket = 'sermons.crossroadshobart.org';
 
-const getPresignedPostData = (selectedFile, bucket) => {
-  return new Promise(resolve => {
-    const xhr = new XMLHttpRequest();
-
-    // Set the proper URL here.
-    const url = 'https://serverless.newfrontdoor.org/sermon-upload';
-
-    xhr.open('POST', url, true);
-    xhr.setRequestHeader('Content-Type', 'application/json');
-    xhr.send(
-      JSON.stringify({
-        name: selectedFile.name,
-        type: selectedFile.type,
-        bucket
-      })
-    );
-    xhr.addEventListener('load', e => {
-      resolve(JSON.parse(e.target.response));
-    });
+function getPresignedPostData(selectedFile, bucket) {
+  return fetch('https://www.crossroadshobart.org/api/sermon-upload', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      name: selectedFile.name,
+      type: selectedFile.type,
+      bucket
+    })
   });
-};
+}
 
-const uploadFileToS3 = (presignedPostData, file) => {
-  return new Promise((resolve, reject) => {
-    const formData = new FormData();
-    Object.keys(presignedPostData.fields).forEach(key => {
-      formData.append(key, presignedPostData.fields[key]);
-    });
-    // Actual file has to be appended last.
-    formData.append('file', file);
-
-    fetch(presignedPostData.url, {
-      method: 'post',
-      body: formData
-    }).then(response => {
-      response.status === 204 ? resolve() : reject(response);
-    });
+function uploadFileToS3(presignedPostData, file) {
+  const formData = new FormData();
+  Object.keys(presignedPostData.fields).forEach(key => {
+    formData.append(key, presignedPostData.fields[key]);
   });
-};
+  // Actual file has to be appended last.
+  formData.append('file', file);
+
+  return fetch(presignedPostData.url, {
+    method: 'POST',
+    body: formData
+  });
+}
 
 function patchSanity({title, passage, series, date, speaker, key}) {
   const doc = {
@@ -62,7 +50,7 @@ function patchSanity({title, passage, series, date, speaker, key}) {
     file: key
   };
 
-  sanityClient.create(doc).then(res => {
+  return sanityClient.create(doc).then(res => {
     console.log(`Document was created, document ID is ${res._id}`);
   });
 }
@@ -153,17 +141,20 @@ class s3upload extends Component {
 
   async activateUpload(selectedFile, bucket) {
     // Step 1 - get pre-signed POST data.
-    const {data} = await getPresignedPostData(selectedFile, bucket);
-    await this.updateKey(data);
+    const response = await getPresignedPostData(selectedFile, bucket);
+
+    if (response.ok) {
+      await response.json().then(data => this.updateKey(data));
+    }
   }
 
-  completeUpload(selectedFile, key) {
+  async completeUpload(selectedFile, presignedPostData) {
     this.setState({
       uploadState: uploadStates[2]
     });
     try {
-      uploadFileToS3(key, selectedFile);
-      patchSanity(this.state);
+      await uploadFileToS3(presignedPostData, selectedFile);
+      await patchSanity(this.state);
       console.log('File was successfully uploaded!');
       this.setState({
         uploadState: uploadStates[3]
