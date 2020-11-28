@@ -11,53 +11,32 @@ import jsmediatags from 'jsmediatags';
 const createPatchFrom = value =>
   PatchEvent.from(value === '' ? unset() : set(value));
 
-const bucket = 'sermons.crossroadshobart.org';
-
-const getPresignedPostData = selectedFile => {
-  return new Promise(resolve => {
-    const xhr = new XMLHttpRequest();
-
-    // Set the proper URL here.
-    const url =
-      'https://www.crossroadshobart.org/api/sermon-upload';
-
-    xhr.open('POST', url, true);
-    xhr.setRequestHeader('Content-Type', 'application/json');
-    xhr.send(
-      JSON.stringify({
-        name: selectedFile.name,
-        type: selectedFile.type
-      })
-    );
-    xhr.addEventListener('load', e => {
-      resolve(JSON.parse(e.target.response));
-    });
+function getPresignedPostData(selectedFile) {
+  return fetch('https://www.crossroadshobart.org/api/sermon-upload', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      name: selectedFile.name,
+      type: selectedFile.type
+    })
   });
-};
+}
 
-const uploadFileToS3 = (presignedPostData, file) => {
-  return new Promise((resolve, reject) => {
-    const formData = new FormData();
-    Object.keys(presignedPostData.fields).forEach(key => {
-      formData.append(key, presignedPostData.fields[key]);
-    });
-    // Actual file has to be appended last.
-    formData.append('file', file);
-
-    console.log(presignedPostData);
-
-    fetch(presignedPostData.url, {
-      method: 'post',
-      body: formData
-    }).then(response => {
-      if (response.status === 204) {
-        resolve();
-      } else {
-        reject(response);
-      }
-    });
+function uploadFileToS3(presignedPostData, file) {
+  const formData = new FormData();
+  Object.keys(presignedPostData.fields).forEach(key => {
+    formData.append(key, presignedPostData.fields[key]);
   });
-};
+  // Actual file has to be appended last.
+  formData.append('file', file);
+
+  return fetch(presignedPostData.url, {
+    method: 'POST',
+    body: formData
+  });
+}
 
 const baseStyle = {
   borderWidth: 2,
@@ -106,28 +85,25 @@ export default class AudioPlayer extends React.Component {
     });
   }
 
-  completeUpload(selectedFile, key) {
+  async completeUpload(selectedFile, key) {
     try {
-      uploadFileToS3(key, selectedFile)
-        .then(() => {
-          this.setState({
-            fileOnS3: true
-          });
-        })
-        .catch(() => {
-          console.log('there was a problem with setting fileonS3 to true');
-        });
+      await uploadFileToS3(key, selectedFile);
+      this.setState({
+        fileOnS3: true
+      });
+
       console.log(key.fields.key);
       this.props.onChange(createPatchFrom(key.fields.key));
       console.log('File was successfully uploaded!');
     } catch (error) {
+      console.log('there was a problem with setting fileonS3 to true');
       console.log('An error occurred!', error.message);
     }
   }
 
   checkAWS = async () => {
     const response = await fetch(
-      `https://s3-ap-southeast-2.amazonaws.com/sermons.crossroadshobart.org/${this.props.value}`,
+      `https://sermons.crossroadshobart.org/${this.props.value}`,
       {
         method: 'HEAD',
         redirect: 'follow'
@@ -135,11 +111,11 @@ export default class AudioPlayer extends React.Component {
     );
 
     // Abort retrying if the resource doesn't exist
-    if (response.status !== 200) {
-      throw new Error(response.statusText);
+    if (response.ok) {
+      return true;
     }
 
-    return true;
+    throw new Error(response.statusText);
   };
 
   componentDidMount() {
@@ -165,17 +141,14 @@ export default class AudioPlayer extends React.Component {
   render() {
     const {type, value} = this.props;
     if (this.state.fileOnS3) {
-      jsmediatags.read(
-        `https://s3-ap-southeast-2.amazonaws.com/${bucket}/${value}`,
-        {
-          onSuccess(tag) {
-            console.log(tag);
-          },
-          onError(error) {
-            console.log(error);
-          }
+      jsmediatags.read(`https://sermons.crossroadshobart.org/${value}`, {
+        onSuccess(tag) {
+          console.log(tag);
+        },
+        onError(error) {
+          console.log(error);
         }
-      );
+      });
     }
 
     return (
@@ -188,7 +161,7 @@ export default class AudioPlayer extends React.Component {
             isInvert={false}
             highlight="#548BF4"
             base="#ddd"
-            audio={`https://s3-ap-southeast-2.amazonaws.com/${bucket}/${value}`}
+            audio={`https://sermons.crossroadshobart.org/${value}`}
           />
         ) : value && this.state.error ? (
           <div>
