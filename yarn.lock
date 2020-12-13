@@ -924,10 +924,10 @@
     react-final-form "^6.3.5"
     react-final-form-arrays "^3.1.1"
 
-"@newfrontdoor/s3-file-upload@^0.4.0":
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/@newfrontdoor/s3-file-upload/-/s3-file-upload-0.4.0.tgz#a7b61f18bcf0f59789f4860eed30c955eb675b0a"
-  integrity sha512-D5nsg+IsSa7A9pwbUCE6wwTKGJmWwrBs6Wgfudp9jk3kyXJpsvSSyJ0v+0PhuQv7Tjr+GgRxLBXFeFfGsb6tuA==
+"@newfrontdoor/s3-file-upload@^0.4.1":
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/@newfrontdoor/s3-file-upload/-/s3-file-upload-0.4.1.tgz#ce193ec327f5c32d6663a03affcae905880b9bd6"
+  integrity sha512-cuCVgBB9UfP5SWPOpTMSKm+5jELoKsC5bL6w3FK2bTW9GRaosLf1AJ51u2/jlxEdvWvzeF5QlkuNECfDsm2Jyw==
   dependencies:
     ky "^0.25.0"
     prop-types "^15.6.2"

@@ -18,7 +18,7 @@
     "@newfrontdoor/audio-player": "^0.3.2",
     "@newfrontdoor/bible": "1.0.0",
     "@newfrontdoor/form": "^0.5.5",
-    "@newfrontdoor/s3-file-upload": "^0.4.0",
+    "@newfrontdoor/s3-file-upload": "^0.4.1",
     "@sanity/base": "^1.149.5",
     "@sanity/color-input": "^1.149.0",
     "@sanity/components": "^1.149.6",
