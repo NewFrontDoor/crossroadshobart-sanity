@@ -3,15 +3,32 @@ name: Deploy Sanity
 on:
   push:
     branches: [master]
-    
+
 jobs:
   sanity-deploy:
+
     runs-on: ubuntu-latest
-    name: Deploy Sanity
+    
     steps:
-      - uses: actions/checkout@v2
-      - uses: sanity-io/github-action-sanity@v0.1-alpha
-        env:
-          SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
-        with:
-          args: deploy
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v1
+      with:
+        node-version: 12.x
+        
+    - name: Get yarn cache directory path
+      id: yarn-cache-dir
+      run: echo "::set-output name=dir::$(yarn cache dir)"
+
+    - uses: actions/cache@v1
+      with:
+        path: ${{ steps.yarn-cache-dir.outputs.dir }}
+        key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-yarn-
+            
+    - run: npm install -g @sanity/cli
+    - run: yarn
+    - run: sanity install
+    - run: sanity deploy
+      env:
+        SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
