@@ -1,0 +1,69 @@
+diff --git a/node_modules/ky/umd.js b/node_modules/ky/umd.js
+index ef1fec5..0c5edec 100644
+--- a/node_modules/ky/umd.js
++++ b/node_modules/ky/umd.js
+@@ -87,7 +87,7 @@
+ 						value = deepMerge(returnValue[key], value);
+ 					}
+ 
+-					returnValue = {...returnValue, [key]: value};
++					returnValue = Object.assign({}, returnValue, {[key]: value});
+ 				}
+ 
+ 				if (isObject(source.headers)) {
+@@ -203,10 +203,11 @@
+ 
+ 	const normalizeRetryOptions = (retry = {}) => {
+ 		if (typeof retry === 'number') {
+-			return {
+-				...defaultRetryOptions,
++			return Object.assign({},
++				defaultRetryOptions,
++			{
+ 				limit: retry
+-			};
++			});
+ 		}
+ 
+ 		if (retry.methods && !Array.isArray(retry.methods)) {
+@@ -217,11 +218,12 @@
+ 			throw new Error('retry.statusCodes must be an array');
+ 		}
+ 
+-		return {
+-			...defaultRetryOptions,
+-			...retry,
++		return Object.assign({},
++			defaultRetryOptions,
++			retry,
++		{
+ 			afterStatusCodes: retryAfterStatusCodes
+-		};
++		});
+ 	};
+ 
+ 	// The maximum value of a 32bit int (see issue #117)
+@@ -231,10 +233,12 @@
+ 		constructor(input, options = {}) {
+ 			this._retryCount = 0;
+ 			this._input = input;
+-			this._options = {
++			this._options = Object.assign({
+ 				// TODO: credentials can be removed when the spec change is implemented in all browsers. Context: https://www.chromestatus.com/feature/4539473312350208
+ 				credentials: this._input.credentials || 'same-origin',
+-				...options,
++			},
++				options,
++			{
+ 				headers: mergeHeaders(this._input.headers, options.headers),
+ 				hooks: deepMerge({
+ 					beforeRequest: [],
+@@ -247,7 +251,7 @@
+ 				throwHttpErrors: options.throwHttpErrors !== false,
+ 				timeout: typeof options.timeout === 'undefined' ? 10000 : options.timeout,
+ 				fetch: options.fetch || globals.fetch
+-			};
++			});
+ 
+ 			if (typeof this._input !== 'string' && !(this._input instanceof URL || this._input instanceof globals.Request)) {
+ 				throw new TypeError('`input` must be a string, URL, or Request');

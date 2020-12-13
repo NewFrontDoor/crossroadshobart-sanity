@@ -8,16 +8,17 @@
   "license": "UNLICENSED",
   "scripts": {
     "start": "sanity start",
-    "test": "sanity check"
+    "test": "sanity check",
+    "postinstall": "patch-package"
   },
   "keywords": [
     "sanity"
   ],
   "dependencies": {
     "@newfrontdoor/audio-player": "^0.3.2",
-    "@newfrontdoor/bible": "0.2.3",
+    "@newfrontdoor/bible": "1.0.0",
     "@newfrontdoor/form": "^0.5.5",
-    "@newfrontdoor/s3-file-upload": "^0.3.0",
+    "@newfrontdoor/s3-file-upload": "^0.4.0",
     "@sanity/base": "^1.149.5",
     "@sanity/color-input": "^1.149.0",
     "@sanity/components": "^1.149.6",
@@ -47,6 +48,7 @@
     "eslint-config-xo-react": "^0.20.0",
     "eslint-plugin-react": "^7.14.3",
     "eslint-plugin-react-hooks": "^2.0.1",
+    "patch-package": "^6.2.2",
     "prettier": "^1.18.2",
     "xo": "^0.25.3"
   },
