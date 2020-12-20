@@ -5,7 +5,7 @@ import {AudioPlayer} from '@newfrontdoor/audio-player';
 import PatchEvent, {set, unset} from 'part:@sanity/form-builder/patch-event';
 
 const host = 'https://sermons.crossroadshobart.org';
-const uploadUrl = 'http://www.crossroadshobart.org/api/sermon-upload';
+const uploadUrl = 'https://www.crossroadshobart.org/api/sermon-upload';
 
 const createPatchFrom = value =>
   PatchEvent.from(value === '' ? unset() : set(value));
